@@ -28,19 +28,3 @@ function to_do_mvc_to_do_mvc_block_init() {
 	register_block_type( __DIR__ . '/build' );
 }
 add_action( 'init', 'to_do_mvc_to_do_mvc_block_init' );
-
-add_action(
-	'init',
-	function(){
-		// Register the cooking time meta fields.
-		register_post_meta(
-			'post',
-			'todos',
-			array(
-				'show_in_rest' => true,
-				'single'       => true,
-				'type'         => 'array',
-			)
-		);
-	}
-);
