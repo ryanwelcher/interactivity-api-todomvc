@@ -8,13 +8,14 @@ wp_interactivity_state(
 	'to-dos',
 	array(
 		'toDosLeft' => 0,
-		'toDos'     => get_post_meta( $post->ID, 'todos', true )
 	)
 );
 ?>
 <section
 	<?php echo wp_kses_data( get_block_wrapper_attributes( array( "class" => "todoapp" ) ) ); ?>
 	data-wp-interactive='to-dos'
+	data-wp-watch="callbacks.saveTodos"
+	data-wp-init="callbacks.loadTodos"
 >
 	<header class="header">
 		<h1>todos</h1>

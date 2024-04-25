@@ -9,6 +9,7 @@ import { store, getElement, getContext } from '@wordpress/interactivity';
 const enterKeyCode = 13;
 const { state } = store( 'to-dos', {
 	state: {
+		init: true,
 		toDos: [],
 		get hasToDos() {
 			return state.toDos.length > 0;
@@ -32,11 +33,15 @@ const { state } = store( 'to-dos', {
 					// Gets the element that is bound to the action.
 					const { ref } = getElement();
 					// Add the new to-do to the list.
-					state.toDos.push( {
-						id: state.toDos.length + 1,
-						text: ref.value,
-						completed: false,
-					} );
+
+					state.toDos = [
+						...state.toDos,
+						{
+							id: state.toDos.length + 1,
+							text: ref.value,
+							completed: false,
+						},
+					];
 					// Clear the input field.
 					ref.value = '';
 				}
@@ -81,7 +86,23 @@ const { state } = store( 'to-dos', {
 			);
 		},
 	},
-	callbacks: {},
+	callbacks: {
+		saveTodos: () => {
+			if ( ! state.init ) {
+				debugLog( 'Saving todos', state.toDos );
+				localStorage.setItem( 'toDos', JSON.stringify( state.toDos ) );
+			}
+		},
+		loadTodos: () => {
+			if ( state.init ) {
+				state.init = false;
+			}
+			const toDos = localStorage.getItem( 'toDos' );
+			if ( toDos ) {
+				state.toDos = JSON.parse( toDos );
+			}
+		},
+	},
 } );
 
 /**
@@ -92,5 +113,5 @@ const { state } = store( 'to-dos', {
  * @param {*} data
  * @returns
  */
-const debugLog = ( data ) =>
-	console.log( JSON.parse( JSON.stringify( data ) ) );
+const debugLog = ( message = 'Debug:', data ) =>
+	console.log( message, JSON.parse( JSON.stringify( data ) ) );
