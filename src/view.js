@@ -38,7 +38,7 @@ const { state } = store( 'to-dos', {
 						...state.toDos,
 						{
 							id: state.toDos.length + 1,
-							text: ref.value,
+							title: ref.value,
 							completed: false,
 						},
 					];

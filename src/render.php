@@ -3,17 +3,18 @@
  * @see https://github.com/WordPress/gutenberg/blob/trunk/docs/reference-guides/block-api/block-metadata.md#render
  */
 
-global $post;
+
 wp_interactivity_state(
 	'to-dos',
 	array(
 		'toDosLeft' => 0,
+		'hasToDos' => false
 	)
 );
 ?>
 <section
 	<?php echo wp_kses_data( get_block_wrapper_attributes( array( "class" => "todoapp" ) ) ); ?>
-	data-wp-interactive='to-dos'
+	data-wp-interactive="to-dos"
 	data-wp-watch="callbacks.saveTodos"
 	data-wp-init="callbacks.loadTodos"
 >
@@ -43,10 +44,10 @@ wp_interactivity_state(
 							data-wp-bind--checked="context.item.completed"
 							data-wp-on--change="actions.toggleCompleted"
 						>
-						<label data-wp-text="context.item.text"></label>
+						<label data-wp-text="context.item.title"></label>
 						<button class="destroy" data-wp-bind--data-id="context.item.id" data-wp-on--click="actions.deleteTodo"></button>
 					</div>
-					<input class="edit" data-wp-bind--value="context.item.text">
+					<input class="edit" data-wp-bind--value="context.item.title">
 				</li>
 			</template>
 		</ul>
