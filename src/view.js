@@ -94,13 +94,11 @@ const { state } = store( 'to-dos', {
 			}
 		},
 		loadTodos: () => {
-			if ( state.init ) {
-				state.init = false;
-			}
 			const toDos = localStorage.getItem( 'toDos' );
 			if ( toDos ) {
 				state.toDos = JSON.parse( toDos );
 			}
+			state.init = false;
 		},
 	},
 } );
