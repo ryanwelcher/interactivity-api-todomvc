@@ -6,10 +6,17 @@ import { store, getElement, getContext } from '@wordpress/interactivity';
 // import apiFetch from '@wordpress/api-fetch'; // Won't work.
 // const apiFetch = wp.apiFetch;
 
+// Doesn't support modules
+const { _n } = wp.i18n;
+
+// Enter key code.
 const enterKeyCode = 13;
-const { state } = store( 'to-dos', {
+
+// Store
+const { state, actions, helpers } = store( 'to-dos', {
 	state: {
 		init: true,
+		editingToDo: 0,
 		toDos: [],
 		get hasToDos() {
 			return state.toDos.length > 0;
@@ -17,33 +24,60 @@ const { state } = store( 'to-dos', {
 		get toDosLeft() {
 			return state.toDos.filter( ( toDo ) => ! toDo.completed ).length;
 		},
+		get itemsLeft() {
+			const numLeft = state.toDos.filter(
+				( toDo ) => ! toDo.completed
+			).length;
+			return ` ${ _n( 'item', 'items', numLeft, 'to-do-mvc' ) } left`;
+		},
 		get hasCompletedTodos() {
 			return state.toDos.some( ( toDo ) => toDo.completed );
 		},
-		get capsSalutation() {
-			return getContext().item.toLocaleUpperCase();
+		get isBeingEdited() {
+			const {
+				item: { id },
+			} = getContext();
+			return state.editingToDo == parseInt( id );
+		},
+		getTodosToDisplay: () => {
+			switch ( state.view ) {
+				case 'active':
+					return state.toDos.filter( ( toDo ) => ! toDo.completed );
+				case 'completed':
+					return state.toDos.filter( ( toDo ) => toDo.completed );
+				default:
+					return state.toDos;
+			}
 		},
 	},
 	actions: {
+		saveEditsForTodo: ( e ) => {
+			switch ( e.keyCode ) {
+				case enterKeyCode: {
+					helpers.saveEditsForTodo();
+				}
+			}
+		},
 		onKeyDown: ( e ) => {
 			switch ( e.keyCode ) {
 				case enterKeyCode: {
-					//??
-					e.preventDefault();
 					// Gets the element that is bound to the action.
 					const { ref } = getElement();
-					// Add the new to-do to the list.
 
-					state.toDos = [
-						...state.toDos,
-						{
-							id: state.toDos.length + 1,
-							title: ref.value,
-							completed: false,
-						},
-					];
-					// Clear the input field.
-					ref.value = '';
+					if ( state.editingToDo === 0 ) {
+						// Add the new to-do to the list.
+						state.toDos = [
+							...state.toDos,
+							{
+								id: state.toDos.length + 1,
+								title: ref.value,
+								completed: false,
+							},
+						];
+
+						// Clear the input field.
+						ref.value = '';
+					}
 				}
 			}
 		},
@@ -85,11 +119,43 @@ const { state } = store( 'to-dos', {
 				( toDo ) => toDo.id !== parseInt( id )
 			);
 		},
+		editTodo: ( e ) => {
+			const {
+				item: { id },
+			} = getContext();
+			state.editingToDo = parseInt( id );
+			// Respond to store change to enable focus.
+		},
+
+		focused: ( e ) => {
+			console.log( e );
+		},
+		editBlur: () => {
+			helpers.saveEditsForTodo();
+		},
+		showAllTodos: ( e ) => {
+			state.view = 'all';
+			actions.navigate( e );
+		},
+		showActiveTodos: ( e ) => {
+			state.view = 'active';
+			actions.navigate( e );
+		},
+		showCompletedTodos: ( e ) => {
+			state.view = 'completed';
+			actions.navigate( e );
+		},
+		*navigate( e ) {
+			e.preventDefault();
+			const { actions } = yield import(
+				'@wordpress/interactivity-router'
+			);
+			yield actions.navigate( e.target.href );
+		},
 	},
 	callbacks: {
 		saveTodos: () => {
 			if ( ! state.init ) {
-				debugLog( 'Saving todos', state.toDos );
 				localStorage.setItem( 'toDos', JSON.stringify( state.toDos ) );
 			}
 		},
@@ -99,6 +165,26 @@ const { state } = store( 'to-dos', {
 				state.toDos = JSON.parse( toDos );
 			}
 			state.init = false;
+		},
+	},
+	// This name is arbitrary.
+	helpers: {
+		saveEditsForTodo: () => {
+			const { ref } = getElement();
+			const {
+				item: { id },
+			} = getContext();
+			if ( state.editingToDo === id ) {
+				state.toDos = [
+					...state.toDos.map( ( toDo ) => {
+						if ( toDo.id === parseInt( id ) ) {
+							toDo.title = ref.value;
+						}
+						return toDo;
+					} ),
+				];
+				state.editingToDo = 0;
+			}
 		},
 	},
 } );
@@ -111,5 +197,5 @@ const { state } = store( 'to-dos', {
  * @param {*} data
  * @returns
  */
-const debugLog = ( message = 'Debug:', data ) =>
+const debugLog = ( data, message = 'Debug:' ) =>
 	console.log( message, JSON.parse( JSON.stringify( data ) ) );

@@ -26,5 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function to_do_mvc_to_do_mvc_block_init() {
 	register_block_type( __DIR__ . '/build' );
+
+	// Load non-module dependencies.
+	wp_enqueue_script('wp-i18n');
 }
 add_action( 'init', 'to_do_mvc_to_do_mvc_block_init' );
