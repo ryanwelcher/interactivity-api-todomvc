@@ -4,11 +4,15 @@
  */
 
 
+
+
+// Give us all the default settings (state) when the app is first loaded.
 wp_interactivity_state(
 	'to-dos',
 	array(
+		'view'      => isset( $_GET['view'] ) ? sanitize_key( $_GET['view'] ) : 'all',
 		'toDosLeft' => 0,
-		'hasToDos' => false
+		'hasToDos'  => false
 	)
 );
 ?>
@@ -47,7 +51,13 @@ wp_interactivity_state(
 						<label data-wp-text="context.item.title" data-wp-on--dblclick="actions.editTodo"></label>
 						<button class="destroy" data-wp-bind--data-id="context.item.id" data-wp-on--click="actions.deleteTodo"></button>
 					</div>
-					<input class="edit" data-wp-bind--value="context.item.title" data-wp-on--blur="actions.editBlur" data-wp-on--focus="actions.focused" data-wp-on-document--keydown="actions.saveEditsForTodo">
+					<!-- NEED TO FOCUS and then on blur have it go away -->
+					<input
+						class="edit"
+						data-wp-bind--value="context.item.title"
+						data-wp-on--blur="actions.editBlur"
+						data-wp-on-document--keydown="actions.saveEditsForTodo"
+					>
 				</li>
 			</template>
 		</ul>
@@ -58,18 +68,24 @@ wp_interactivity_state(
 		data-wp-bind--hidden="!state.hasToDos"
 	>
 		<!-- This should be `0 items left` by default -->
-		<span class="todo-count"><strong data-wp-text="state.toDosLeft"></strong><span data-wp-text="state.itemsLeft">item(s) left</span></span>
-		<span class="todo-count"><strong>X</strong>item(s) left</span>
+		<span class="todo-count">
+			<strong data-wp-text="state.toDosLeft"></strong>
+			<span data-wp-text="state.itemsLeft">ddd</span>
+		</span>
+
+		<!-- THERE IS NO WAY OF UPDATING HTML CURRENTLY
+			<span class="todo-count"><strong>X</strong>item(s) left</span>
+		-->
 		<!-- Remove this if you don't implement routing -->
 		<ul class="filters">
 			<li>
-				<a class="selected" data-wp-on--click="actions.showAllTodos" href="#/">All</a>
+				<a data-wp-class--selected="state.isShowingAll" data-wp-on--click="actions.showAllTodos" href="?view=all">All</a>
 			</li>
 			<li>
-				<a data-wp-on--click="actions.showActiveTodos" href="#/active">Active</a>
+				<a data-wp-class--selected="state.isShowingActive" data-wp-on--click="actions.showActiveTodos" href="?view=active">Active</a>
 			</li>
 			<li>
-				<a data-wp-on--click="actions.showCompletedTodos" href="#/completed">Completed</a>
+				<a data-wp-class--selected="state.isShowingCompleted" data-wp-on--click="actions.showCompletedTodos" href="?view=completed">Completed</a>
 			</li>
 		</ul>
 		<!-- Hidden if no completed items are left ↓ -->

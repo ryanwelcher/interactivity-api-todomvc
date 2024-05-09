@@ -1,7 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { store, getElement, getContext } from '@wordpress/interactivity';
+import {
+	store,
+	getElement,
+	getContext,
+	withScope,
+} from '@wordpress/interactivity';
 
 // import apiFetch from '@wordpress/api-fetch'; // Won't work.
 // const apiFetch = wp.apiFetch;
@@ -25,10 +30,12 @@ const { state, actions, helpers } = store( 'to-dos', {
 			return state.toDos.filter( ( toDo ) => ! toDo.completed ).length;
 		},
 		get itemsLeft() {
-			const numLeft = state.toDos.filter(
-				( toDo ) => ! toDo.completed
-			).length;
-			return ` ${ _n( 'item', 'items', numLeft, 'to-do-mvc' ) } left`;
+			return ` ${ _n(
+				'item',
+				'items',
+				state.toDosLeft, // Hint: DON'T call 'state.toDosLeft()' here.
+				'to-do-mvc'
+			) } left`;
 		},
 		get hasCompletedTodos() {
 			return state.toDos.some( ( toDo ) => toDo.completed );
@@ -49,6 +56,11 @@ const { state, actions, helpers } = store( 'to-dos', {
 					return state.toDos;
 			}
 		},
+
+		// Can this be simplified?
+		isShowingAll: () => state.view === 'all',
+		isShowingActive: () => state.view === 'active',
+		isShowingCompleted: () => state.view === 'completed',
 	},
 	actions: {
 		saveEditsForTodo: ( e ) => {
@@ -123,8 +135,18 @@ const { state, actions, helpers } = store( 'to-dos', {
 			const {
 				item: { id },
 			} = getContext();
+
+			// Setting the todo id that is being edited.
 			state.editingToDo = parseInt( id );
-			// Respond to store change to enable focus.
+
+			// Works to set the focus on the clicked todo. We need to delay slightly to allow the todo edit input to be focused.
+			setTimeout(
+				withScope( () => {
+					const { ref } = getElement();
+					ref.closest( 'li' ).querySelector( '.edit' ).focus();
+				} ),
+				0
+			);
 		},
 
 		focused: ( e ) => {
