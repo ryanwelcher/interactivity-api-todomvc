@@ -8,9 +8,6 @@ import {
 	withScope,
 } from '@wordpress/interactivity';
 
-// import apiFetch from '@wordpress/api-fetch'; // Won't work.
-// const apiFetch = wp.apiFetch;
-
 // Doesn't support modules
 const { _n } = wp.i18n;
 
