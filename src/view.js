@@ -30,7 +30,7 @@ const { state, actions, helpers } = store( 'to-dos', {
 			return ` ${ _n(
 				'item',
 				'items',
-				state.toDosLeft, // Hint: DON'T call 'state.toDosLeft()' here.
+				state.toDosLeft,
 				'to-do-mvc'
 			) } left`;
 		},
