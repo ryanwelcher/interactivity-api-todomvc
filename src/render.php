@@ -38,7 +38,7 @@ wp_interactivity_state(
 		<input id="toggle-all" class="toggle-all" type="checkbox" data-wp-on--change="actions.markAllComplete">
 		<label for="toggle-all">Mark all as complete</label>
 		<ul class="todo-list">
-			<template data-wp-each="state.getTodosToDisplay" data-wp-each-key="context.item.id">
+			<template data-wp-each="state.todosToDisplay" data-wp-each-key="context.item.id">
 				<li data-wp-class--completed="context.item.completed" data-wp-class--editing="state.isBeingEdited">
 					<div class="view">
 						<input

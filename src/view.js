@@ -43,7 +43,7 @@ const { state, actions, helpers } = store( 'to-dos', {
 			} = getContext();
 			return state.editingToDo == parseInt( id );
 		},
-		getTodosToDisplay: () => {
+		get todosToDisplay() {
 			switch ( state.view ) {
 				case 'active':
 					return state.toDos.filter( ( toDo ) => ! toDo.completed );
@@ -55,9 +55,15 @@ const { state, actions, helpers } = store( 'to-dos', {
 		},
 
 		// Can this be simplified?
-		isShowingAll: () => state.view === 'all',
-		isShowingActive: () => state.view === 'active',
-		isShowingCompleted: () => state.view === 'completed',
+		get isShowingAll() {
+			return state.view === 'all';
+		},
+		get isShowingActive() {
+			return state.view === 'active';
+		},
+		get isShowingCompleted() {
+			return state.view === 'completed';
+		},
 	},
 	actions: {
 		saveEditsForTodo: ( e ) => {
