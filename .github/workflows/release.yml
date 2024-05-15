@@ -12,7 +12,7 @@ jobs:
             contents: write
         strategy:
             matrix:
-                node-version: [21.x, 20.x, 18.x]
+                node-version: [18.x]
                 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         steps:
             - uses: actions/checkout@v3
@@ -25,5 +25,4 @@ jobs:
             - run: npm run release
             - uses: ncipollo/release-action@v1
               with:
-                  artifacts: 'release.tar.gz,foo/*.txt'
-                  bodyFile: 'body.md'
+                  artifacts: 'to-do-mvc.zip'
