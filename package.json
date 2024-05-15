@@ -12,8 +12,14 @@
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start --webpack-copy-php --experimental-modules"
+		"start": "wp-scripts start --webpack-copy-php --experimental-modules",
+		"release": "npm run build && npm run plugin-zip"
 	},
+	"files": [
+		"build",
+		"to-do-mvc.php",
+		"readme.txt"
+	],
 	"devDependencies": {
 		"@wordpress/scripts": "^27.7.0"
 	},
