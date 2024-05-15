@@ -13,6 +13,7 @@ wp_interactivity_state(
 		'view'      => isset( $_GET['view'] ) ? sanitize_key( $_GET['view'] ) : 'all',
 		'toDosLeft' => 0,
 		'hasToDos'  => false
+
 	)
 );
 ?>
@@ -79,13 +80,13 @@ wp_interactivity_state(
 		<!-- Remove this if you don't implement routing -->
 		<ul class="filters">
 			<li>
-				<a data-wp-class--selected="state.isShowingAll" data-wp-on--click="actions.showAllTodos" href="?view=all">All</a>
+				<a data-status="all" data-wp-class--selected="state.checkViewState" data-wp-on--click="actions.showAllTodos" href="?view=all">All</a>
 			</li>
 			<li>
-				<a data-wp-class--selected="state.isShowingActive" data-wp-on--click="actions.showActiveTodos" href="?view=active">Active</a>
+				<a data-status="active" data-wp-class--selected="state.checkViewState" data-wp-on--click="actions.showActiveTodos" href="?view=active">Active</a>
 			</li>
 			<li>
-				<a data-wp-class--selected="state.isShowingCompleted" data-wp-on--click="actions.showCompletedTodos" href="?view=completed">Completed</a>
+				<a data-status="completed" data-wp-class--selected="state.checkViewState" data-wp-on--click="actions.showCompletedTodos" href="?view=completed">Completed</a>
 			</li>
 		</ul>
 		<!-- Hidden if no completed items are left ↓ -->

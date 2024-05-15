@@ -54,15 +54,12 @@ const { state, actions, helpers } = store( 'to-dos', {
 			}
 		},
 
-		// Can this be simplified?
-		get isShowingAll() {
-			return state.view === 'all';
-		},
-		get isShowingActive() {
-			return state.view === 'active';
-		},
-		get isShowingCompleted() {
-			return state.view === 'completed';
+		get checkViewState() {
+			const {
+				attributes: { 'data-status': status },
+			} = getElement();
+
+			return state.view === status;
 		},
 	},
 	actions: {
