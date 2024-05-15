@@ -26,3 +26,5 @@ jobs:
             - uses: ncipollo/release-action@v1
               with:
                   artifacts: 'to-do-mvc.zip'
+                  allowUpdates: true
+                  updateOnlyUnreleased: true
