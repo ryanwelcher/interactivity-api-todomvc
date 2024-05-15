@@ -27,4 +27,3 @@ jobs:
               with:
                   artifacts: 'to-do-mvc.zip'
                   allowUpdates: true
-                  updateOnlyUnreleased: true
