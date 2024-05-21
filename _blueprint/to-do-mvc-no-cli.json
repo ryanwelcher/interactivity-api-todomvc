@@ -1,0 +1,48 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "preferredVersions": {
+    "php": "8.0",
+    "wp": "latest"
+  },
+  "phpExtensionBundles": [
+    "kitchen-sink"
+  ],
+  "features": {},
+  "steps": [
+    null,
+    false,
+    {
+      "step": "login",
+      "username": "admin",
+      "password": "password"
+    },
+    {
+      "step": "installPlugin",
+      "pluginZipFile": {
+        "resource": "url",
+        "url": "https://github-proxy.com/proxy/?repo=ryanwelcher/interactivity-api-todomvc&release=test-four&asset=to-do-mvc.zip"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+		{
+			"step":"mkdir",
+			"path": "/wordpress/wp-content/plugins/mvc-setup/"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/plugins/mvc-setup/mvc-setup.php",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/ryanwelcher/interactivity-api-todomvc/trunk/_blueprint/setup.php"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "/wordpress/wp-content/plugins/mvc-setup/"
+		},
+    null,
+    null
+  ]
+}
