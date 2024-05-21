@@ -9,8 +9,6 @@
   ],
   "features": {},
   "steps": [
-    null,
-    false,
     {
       "step": "login",
       "username": "admin",
@@ -41,8 +39,6 @@
 		{
 			"step": "activatePlugin",
 			"pluginPath": "/wordpress/wp-content/plugins/mvc-setup/"
-		},
-    null,
-    null
+		}
   ]
 }

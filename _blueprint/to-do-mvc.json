@@ -8,8 +8,6 @@
   ],
   "features": {},
   "steps": [
-    null,
-    false,
     {
       "step": "login",
       "username": "admin",
@@ -36,8 +34,6 @@
     {
       "step": "runPHP",
       "code": "<?php require_once 'wordpress/wp-load.php'; $pages = wp_get_recent_posts( array( 'post_type'=>'page', 'post_per_page' => 1 ) ); update_option( 'page_on_front', $pages[0]['ID'] ); ?>"
-    },
-    null,
-    null
+    }
   ]
 }
