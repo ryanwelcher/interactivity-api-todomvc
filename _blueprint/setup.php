@@ -3,8 +3,8 @@
  * Plugin Name: Setup MVC To-do demo
  */
 
-add_action(
-	'init',
+register_activation_hook(
+	__FILE__,
 	function () {
 
 		// Create a new page.
