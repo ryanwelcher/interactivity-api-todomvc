@@ -1,0 +1,43 @@
+{
+  "preferredVersions": {
+    "php": "8.0",
+    "wp": "latest"
+  },
+  "phpExtensionBundles": [
+    "kitchen-sink"
+  ],
+  "features": {},
+  "steps": [
+    null,
+    false,
+    {
+      "step": "login",
+      "username": "admin",
+      "password": "password"
+    },
+    {
+      "step": "installPlugin",
+      "pluginZipFile": {
+        "resource": "url",
+        "url": "https://github-proxy.com/proxy/?repo=ryanwelcher/interactivity-api-todomvc&release=test-four&asset=to-do-mvc.zip"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "wp-cli",
+      "command": "wp option update show_on_front page"
+    },
+    {
+      "step": "wp-cli",
+      "command": "wp post create --post_type='Page' --post_title='' --post_status='publish' --post_content='<!-- wp:to-do-mvc/to-do-mvc /-->'"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wordpress/wp-load.php'; $pages = wp_get_recent_posts( array( 'post_type'=>'page', 'post_per_page' => 1 ) ); update_option( 'page_on_front', $pages[0]['ID'] ); ?>"
+    },
+    null,
+    null
+  ]
+}
