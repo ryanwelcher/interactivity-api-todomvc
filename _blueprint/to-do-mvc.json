@@ -15,8 +15,8 @@
     {
       "step": "installPlugin",
       "pluginData": {
-        "resource": "url",
-        "url": "https://github-proxy.com/proxy/?repo=ryanwelcher/interactivity-api-todomvc&release=test-four"
+        "resource":"url",
+        "url": "https://github.com/ryanwelcher/interactivity-api-todomvc"
       }
     },
     {
