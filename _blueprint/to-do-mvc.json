@@ -1,26 +1,22 @@
 {
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "preferredVersions": {
     "php": "8.0",
     "wp": "latest"
   },
-  "phpExtensionBundles": [
-    "kitchen-sink"
-  ],
-  "features": {},
+  "features": {
+    "networking": true
+  },
   "steps": [
     {
       "step": "login",
-      "username": "admin",
-      "password": "password"
+      "username": "admin"
     },
     {
       "step": "installPlugin",
-      "pluginZipFile": {
-        "resource": "url",
-        "url": "https://github-proxy.com/proxy/?repo=ryanwelcher/interactivity-api-todomvc&release=test-four&asset=to-do-mvc.zip"
-      },
-      "options": {
-        "activate": true
+      "pluginData": {
+        "resource":"url",
+        "url": "https://github.com/ryanwelcher/interactivity-api-todomvc"
       }
     },
     {
@@ -29,7 +25,7 @@
     },
     {
       "step": "wp-cli",
-      "command": "wp post create --post_type='Page' --post_title='' --post_status='publish' --post_content='<!-- wp:to-do-mvc/to-do-mvc /-->'"
+      "command": "wp post create --post_type='Page' --post_title='Todo Block - Showcasing the Interactivity API' --post_status='publish' --post_content='<!-- wp:to-do-mvc/to-do-mvc /-->'"
     },
     {
       "step": "runPHP",
