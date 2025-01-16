@@ -25,7 +25,7 @@
     },
     {
       "step": "wp-cli",
-      "command": "wp post create --post_type='Page' --post_title='ASDF' --post_status='publish' --post_content='<!-- wp:to-do-mvc/to-do-mvc /-->'"
+      "command": "wp post create --post_type='Page' --post_title='Todo Block - Showcasing the Interactivity API' --post_status='publish' --post_content='<!-- wp:to-do-mvc/to-do-mvc /-->'"
     },
     {
       "step": "runPHP",
