@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "to-do-mvc/to-do-mvc",
+  "version": "0.1.0",
+  "title": "To Do Mvc",
+  "category": "widgets",
+  "icon": "yes-alt",
+  "description": "A to-do block in the style of https://todomvc.com/",
+  "example": {},
+  "supports": {
+    "html": false,
+    "interactivity": true,
+    "multiple": false
+  },
+  "textdomain": "to-do-mvc",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScriptModule": "file:./view.js"
+}
