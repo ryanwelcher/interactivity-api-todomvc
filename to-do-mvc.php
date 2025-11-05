@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       To Do Mvc
- * Description:       Example block scaffolded with Create Block tool.
+ * Description:       A to-do block in the style of https://todomvc.com/
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Version:           0.1.0
@@ -28,6 +28,6 @@ function to_do_mvc_to_do_mvc_block_init() {
 	register_block_type( __DIR__ . '/build' );
 
 	// Load non-module dependencies.
-	wp_enqueue_script('wp-i18n');
+	wp_enqueue_script( 'wp-i18n' );
 }
 add_action( 'init', 'to_do_mvc_to_do_mvc_block_init' );

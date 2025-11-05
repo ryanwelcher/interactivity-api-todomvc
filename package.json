@@ -21,7 +21,7 @@
 		"readme.txt"
 	],
 	"devDependencies": {
-		"@wordpress/scripts": "^27.7.0"
+		"@wordpress/scripts": "^30.27.0"
 	},
 	"prettier": "@wordpress/prettier-config"
 }

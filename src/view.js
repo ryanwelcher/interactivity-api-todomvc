@@ -188,6 +188,13 @@ const { state, actions, helpers } = store( 'to-dos', {
 			}
 			state.init = false;
 		},
+		initCounterSection: () => {
+			const { ref } = getElement();
+			state.counterElement = ref;
+		},
+		updateCounterSection: () => {
+			state.counterElement.innerHTML = `<strong>${ state.toDosLeft }</strong>${ state.itemsLeft }`;
+		},
 	},
 	// This name is arbitrary.
 	helpers: {

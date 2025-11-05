@@ -12,13 +12,13 @@ wp_interactivity_state(
 	array(
 		'view'      => isset( $_GET['view'] ) ? sanitize_key( $_GET['view'] ) : 'all',
 		'toDosLeft' => 0,
-		'hasToDos'  => false
+		'hasToDos'  => false,
 
 	)
 );
 ?>
 <section
-	<?php echo wp_kses_data( get_block_wrapper_attributes( array( "class" => "todoapp" ) ) ); ?>
+	<?php echo wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'todoapp' ) ) ); ?>
 	data-wp-interactive="to-dos"
 	data-wp-watch="callbacks.saveTodos"
 	data-wp-init="callbacks.loadTodos"
@@ -68,15 +68,10 @@ wp_interactivity_state(
 		class="footer"
 		data-wp-bind--hidden="!state.hasToDos"
 	>
-		<!-- This should be `0 items left` by default -->
-		<span class="todo-count">
-			<strong data-wp-text="state.toDosLeft"></strong>
-			<span data-wp-text="state.itemsLeft">ddd</span>
-		</span>
 
-		<!-- THERE IS NO WAY OF UPDATING HTML CURRENTLY
-			<span class="todo-count"><strong>X</strong>item(s) left</span>
-		-->
+		<!-- We have to hack this a bit by storing a ref and updating the innerHtml -->
+		<span class="todo-count" data-wp-init="callbacks.initCounterSection" data-wp-watch="callbacks.updateCounterSection"></span>
+
 		<!-- Remove this if you don't implement routing -->
 		<ul class="filters">
 			<li>
