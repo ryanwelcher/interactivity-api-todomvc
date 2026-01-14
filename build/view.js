@@ -1,1 +1,302 @@
-import{getContext as t,getElement as e,store as o,withScope as s}from"@wordpress/interactivity";var i={438:t=>{t.exports=import("@wordpress/interactivity-router")}},r={};function n(t){var e=r[t];if(void 0!==e)return e.exports;var o=r[t]={exports:{}};return i[t](o,o.exports,n),o.exports}const{_n}=wp.i18n,{state:d,actions:a,helpers:l}=o("to-dos",{state:{init:!0,editingToDo:0,toDos:[],get hasToDos(){return d.toDos.length>0},get toDosLeft(){return d.toDos.filter(t=>!t.completed).length},get itemsLeft(){return` ${_n("item","items",d.toDosLeft,"to-do-mvc")} left`},get hasCompletedTodos(){return d.toDos.some(t=>t.completed)},get isBeingEdited(){const{item:{id:e}}=t();return d.editingToDo==parseInt(e)},get todosToDisplay(){switch(d.view){case"active":return d.toDos.filter(t=>!t.completed);case"completed":return d.toDos.filter(t=>t.completed);default:return d.toDos}},get checkViewState(){const{attributes:{"data-status":t}}=e();return d.view===t}},actions:{saveEditsForTodo:t=>{13===t.keyCode&&l.saveEditsForTodo()},onKeyDown:t=>{if(13===t.keyCode){const{ref:t}=e();0===d.editingToDo&&(d.toDos=[...d.toDos,{id:d.toDos.length+1,title:t.value,completed:!1}],t.value="")}},toggleCompleted:()=>{const{ref:{dataset:{id:t}}}=e();d.toDos=d.toDos.map(e=>(e.id===parseInt(t)&&(e.completed=!e.completed),e))},clearCompletedTodos:()=>{d.toDos=d.toDos.filter(t=>!t.completed)},markAllComplete:()=>{const t=d.toDos.every(t=>t.completed);d.toDos=d.toDos.map(e=>(e.completed=!t,e))},deleteTodo:()=>{const{ref:{dataset:{id:t}}}=e();d.toDos=d.toDos.filter(e=>e.id!==parseInt(t))},editTodo:o=>{const{item:{id:i}}=t();d.editingToDo=parseInt(i),setTimeout(s(()=>{const{ref:t}=e();t.closest("li").querySelector(".edit").focus()}),0)},focused:t=>{console.log(t)},editBlur:()=>{l.saveEditsForTodo()},showAllTodos:t=>{d.view="all",a.navigate(t)},showActiveTodos:t=>{d.view="active",a.navigate(t)},showCompletedTodos:t=>{d.view="completed",a.navigate(t)},*navigate(t){t.preventDefault();const{actions:e}=yield Promise.resolve().then(n.bind(n,438));yield e.navigate(t.target.href)}},callbacks:{saveTodos:()=>{d.init||localStorage.setItem("toDos",JSON.stringify(d.toDos))},loadTodos:()=>{const t=localStorage.getItem("toDos");t&&(d.toDos=JSON.parse(t)),d.init=!1},initCounterSection:()=>{const{ref:t}=e();d.counterElement=t},updateCounterSection:()=>{d.counterElement.innerHTML=`<strong>${d.toDosLeft}</strong>${d.itemsLeft}`}},helpers:{saveEditsForTodo:()=>{const{ref:o}=e(),{item:{id:s}}=t();d.editingToDo===s&&(d.toDos=[...d.toDos.map(t=>(t.id===parseInt(s)&&(t.title=o.value),t))],d.editingToDo=0)}}});
+import * as __WEBPACK_EXTERNAL_MODULE__wordpress_interactivity_8e89b257__ from "@wordpress/interactivity";
+/******/ var __webpack_modules__ = ({
+
+/***/ "@wordpress/interactivity":
+/*!*******************************************!*\
+  !*** external "@wordpress/interactivity" ***!
+  \*******************************************/
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__wordpress_interactivity_8e89b257__;
+
+/***/ }),
+
+/***/ "@wordpress/interactivity-router":
+/*!**************************************************!*\
+  !*** external "@wordpress/interactivity-router" ***!
+  \**************************************************/
+/***/ ((module) => {
+
+module.exports = import("@wordpress/interactivity-router");;
+
+/***/ })
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+/*!*********************!*\
+  !*** ./src/view.js ***!
+  \*********************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/interactivity */ "@wordpress/interactivity");
+/**
+ * WordPress dependencies
+ */
+
+
+// Doesn't support modules
+const {
+  _n
+} = wp.i18n;
+
+// Enter key code.
+const enterKeyCode = 13;
+
+// Store
+const {
+  state,
+  actions,
+  helpers
+} = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.store)('to-dos', {
+  state: {
+    init: true,
+    editingToDo: 0,
+    toDos: [],
+    get hasToDos() {
+      return state.toDos.length > 0;
+    },
+    get toDosLeft() {
+      return state.toDos.filter(toDo => !toDo.completed).length;
+    },
+    get itemsLeft() {
+      return ` ${_n('item', 'items', state.toDosLeft, 'to-do-mvc')} left`;
+    },
+    get hasCompletedTodos() {
+      return state.toDos.some(toDo => toDo.completed);
+    },
+    get isBeingEdited() {
+      const {
+        item: {
+          id
+        }
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getContext)();
+      return state.editingToDo == parseInt(id);
+    },
+    get todosToDisplay() {
+      switch (state.view) {
+        case 'active':
+          return state.toDos.filter(toDo => !toDo.completed);
+        case 'completed':
+          return state.toDos.filter(toDo => toDo.completed);
+        default:
+          return state.toDos;
+      }
+    },
+    get checkViewState() {
+      const {
+        attributes: {
+          'data-status': status
+        }
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+      return state.view === status;
+    }
+  },
+  actions: {
+    saveEditsForTodo: e => {
+      switch (e.keyCode) {
+        case enterKeyCode:
+          {
+            helpers.saveEditsForTodo();
+          }
+      }
+    },
+    onKeyDown: e => {
+      switch (e.keyCode) {
+        case enterKeyCode:
+          {
+            // Gets the element that is bound to the action.
+            const {
+              ref
+            } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+            if (state.editingToDo === 0) {
+              // Add the new to-do to the list.
+              state.toDos = [...state.toDos, {
+                id: state.toDos.length + 1,
+                title: ref.value,
+                completed: false
+              }];
+
+              // Clear the input field.
+              ref.value = '';
+            }
+          }
+      }
+    },
+    toggleCompleted: () => {
+      const {
+        ref: {
+          dataset: {
+            id
+          }
+        }
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+      state.toDos = state.toDos.map(toDo => {
+        if (toDo.id === parseInt(id)) {
+          toDo.completed = !toDo.completed;
+        }
+        return toDo;
+      });
+    },
+    clearCompletedTodos: () => {
+      state.toDos = state.toDos.filter(toDo => !toDo.completed);
+    },
+    markAllComplete: () => {
+      const allCompleted = state.toDos.every(toDo => toDo.completed);
+      state.toDos = state.toDos.map(toDo => {
+        toDo.completed = !allCompleted;
+        return toDo;
+      });
+    },
+    deleteTodo: () => {
+      const {
+        ref: {
+          dataset: {
+            id
+          }
+        }
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+      state.toDos = state.toDos.filter(toDo => toDo.id !== parseInt(id));
+    },
+    editTodo: e => {
+      const {
+        item: {
+          id
+        }
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getContext)();
+
+      // Setting the todo id that is being edited.
+      state.editingToDo = parseInt(id);
+
+      // Works to set the focus on the clicked todo. We need to delay slightly to allow the todo edit input to be focused.
+      setTimeout((0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.withScope)(() => {
+        const {
+          ref
+        } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+        ref.closest('li').querySelector('.edit').focus();
+      }), 0);
+    },
+    focused: e => {
+      console.log(e);
+    },
+    editBlur: () => {
+      helpers.saveEditsForTodo();
+    },
+    showAllTodos: e => {
+      state.view = 'all';
+      actions.navigate(e);
+    },
+    showActiveTodos: e => {
+      state.view = 'active';
+      actions.navigate(e);
+    },
+    showCompletedTodos: e => {
+      state.view = 'completed';
+      actions.navigate(e);
+    },
+    *navigate(e) {
+      e.preventDefault();
+      const {
+        actions
+      } = yield Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! @wordpress/interactivity-router */ "@wordpress/interactivity-router"));
+      yield actions.navigate(e.target.href);
+    }
+  },
+  callbacks: {
+    saveTodos: () => {
+      if (!state.init) {
+        localStorage.setItem('toDos', JSON.stringify(state.toDos));
+      }
+    },
+    loadTodos: () => {
+      const toDos = localStorage.getItem('toDos');
+      if (toDos) {
+        state.toDos = JSON.parse(toDos);
+      }
+      state.init = false;
+    },
+    initCounterSection: () => {
+      const {
+        ref
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+      state.counterElement = ref;
+    },
+    updateCounterSection: () => {
+      state.counterElement.innerHTML = `<strong>${state.toDosLeft}</strong>${state.itemsLeft}`;
+    }
+  },
+  // This name is arbitrary.
+  helpers: {
+    saveEditsForTodo: () => {
+      const {
+        ref
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getElement)();
+      const {
+        item: {
+          id
+        }
+      } = (0,_wordpress_interactivity__WEBPACK_IMPORTED_MODULE_0__.getContext)();
+      if (state.editingToDo === id) {
+        state.toDos = [...state.toDos.map(toDo => {
+          if (toDo.id === parseInt(id)) {
+            toDo.title = ref.value;
+          }
+          return toDo;
+        })];
+        state.editingToDo = 0;
+      }
+    }
+  }
+});
+
+/**
+ * Helper to log the data in a readable format. Useful for debugging parts of the store.
+ *
+ * Use console.log for non-store values.
+ *
+ * @param {*} data
+ * @returns
+ */
+const debugLog = (data, message = 'Debug:') => console.log(message, JSON.parse(JSON.stringify(data)));
+})();
+
+
+//# sourceMappingURL=view.js.map
