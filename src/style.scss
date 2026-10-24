@@ -7,6 +7,28 @@
 
 .wp-block-to-do-mvc-to-do-mvc {
 
+	.todo-warning {
+		padding: 10px 15px;
+		background: #fcf0f1;
+		border-left: 4px solid #d63638;
+		color: #8a2424;
+		font-size: 14px;
+
+		&[hidden] {
+			display: none;
+		}
+
+		button {
+			float: right;
+			border: 0;
+			background: none;
+			cursor: pointer;
+			font-size: 18px;
+			line-height: 1;
+		}
+	}
+
+
 	background: #fff;
 	margin: 130px 0 40px 0;
 	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),

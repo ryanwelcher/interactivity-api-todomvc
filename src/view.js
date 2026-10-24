@@ -9,17 +9,24 @@ import {
 } from '@wordpress/interactivity';
 
 // Doesn't support modules
-const { _n } = wp.i18n;
+const { _n, _x } = wp.i18n;
 
 // Enter key code.
 const enterKeyCode = 13;
 
+// Pending warning auto-dismiss and debounced save timers.
+let warningTimer;
+let saveTimer;
+
+// The last list the server confirmed, as JSON. `null` until the first run.
+let confirmedTodos = null;
+
 // Store
 const { state, actions, helpers } = store( 'to-dos', {
 	state: {
-		init: true,
 		editingToDo: 0,
-		toDos: [],
+		// `toDos` comes from the server (render.php). Don't give it a default here,
+		// or the client default replaces the server-rendered list.
 		get hasToDos() {
 			return state.toDos.length > 0;
 		},
@@ -76,13 +83,23 @@ const { state, actions, helpers } = store( 'to-dos', {
 					// Gets the element that is bound to the action.
 					const { ref } = getElement();
 
-					if ( state.editingToDo === 0 ) {
+					// The handler listens on the document, so only react to Enter in the new to-do input.
+					if ( e.target !== ref ) {
+						return;
+					}
+
+					if ( ! helpers.requireEdit( e ) ) {
+						return;
+					}
+
+					const title = ref.value.trim();
+					if ( state.editingToDo === 0 && title ) {
 						// Add the new to-do to the list.
 						state.toDos = [
 							...state.toDos,
 							{
-								id: state.toDos.length + 1,
-								title: ref.value,
+								id: helpers.nextId(),
+								title,
 								completed: false,
 							},
 						];
@@ -93,7 +110,10 @@ const { state, actions, helpers } = store( 'to-dos', {
 				}
 			}
 		},
-		toggleCompleted: () => {
+		toggleCompleted: ( e ) => {
+			if ( ! helpers.requireEdit( e ) ) {
+				return;
+			}
 			const {
 				ref: {
 					dataset: { id },
@@ -107,11 +127,17 @@ const { state, actions, helpers } = store( 'to-dos', {
 				return toDo;
 			} );
 		},
-		clearCompletedTodos: () => {
+		clearCompletedTodos: ( e ) => {
+			if ( ! helpers.requireEdit( e ) ) {
+				return;
+			}
 			state.toDos = state.toDos.filter( ( toDo ) => ! toDo.completed );
 		},
 
-		markAllComplete: () => {
+		markAllComplete: ( e ) => {
+			if ( ! helpers.requireEdit( e ) ) {
+				return;
+			}
 			const allCompleted = state.toDos.every(
 				( toDo ) => toDo.completed
 			);
@@ -120,7 +146,10 @@ const { state, actions, helpers } = store( 'to-dos', {
 				return toDo;
 			} );
 		},
-		deleteTodo: () => {
+		deleteTodo: ( e ) => {
+			if ( ! helpers.requireEdit( e ) ) {
+				return;
+			}
 			const {
 				ref: {
 					dataset: { id },
@@ -132,6 +161,9 @@ const { state, actions, helpers } = store( 'to-dos', {
 			);
 		},
 		editTodo: ( e ) => {
+			if ( ! helpers.requireEdit( e ) ) {
+				return;
+			}
 			const {
 				item: { id },
 			} = getContext();
@@ -149,6 +181,13 @@ const { state, actions, helpers } = store( 'to-dos', {
 			);
 		},
 
+		requireEdit: ( e ) => {
+			helpers.requireEdit( e );
+		},
+		dismissWarning: () => {
+			clearTimeout( warningTimer );
+			state.warning = '';
+		},
 		focused: ( e ) => {
 			console.log( e );
 		},
@@ -177,16 +216,20 @@ const { state, actions, helpers } = store( 'to-dos', {
 	},
 	callbacks: {
 		saveTodos: () => {
-			if ( ! state.init ) {
-				localStorage.setItem( 'toDos', JSON.stringify( state.toDos ) );
+			// Reading the serialized list makes this watcher re-run on every change.
+			const current = JSON.stringify( state.toDos );
+
+			if ( confirmedTodos === null ) {
+				// First run: the server-rendered list is the confirmed one.
+				confirmedTodos = current;
+				return;
 			}
-		},
-		loadTodos: () => {
-			const toDos = localStorage.getItem( 'toDos' );
-			if ( toDos ) {
-				state.toDos = JSON.parse( toDos );
+			if ( ! state.canEdit || current === confirmedTodos ) {
+				return;
 			}
-			state.init = false;
+
+			clearTimeout( saveTimer );
+			saveTimer = setTimeout( () => helpers.save( current ), 500 );
 		},
 		initCounterSection: () => {
 			const { ref } = getElement();
@@ -198,6 +241,62 @@ const { state, actions, helpers } = store( 'to-dos', {
 	},
 	// This name is arbitrary.
 	helpers: {
+		// Next free id: highest existing id + 1.
+		nextId: () =>
+			state.toDos.reduce( ( max, toDo ) => Math.max( max, toDo.id ), 0 ) +
+			1,
+		// Shows a warning that goes away on its own.
+		warn: ( message ) => {
+			clearTimeout( warningTimer );
+			state.warning = message;
+			warningTimer = setTimeout( () => {
+				state.warning = '';
+			}, 6000 );
+		},
+		// Returns true if the user may edit. Otherwise warns and undoes the browser's own change.
+		requireEdit: ( e ) => {
+			if ( state.canEdit ) {
+				return true;
+			}
+			if ( e ) {
+				e.preventDefault?.();
+				// The browser already flipped the checkbox; flip it back.
+				if ( e.target?.type === 'checkbox' ) {
+					e.target.checked = ! e.target.checked;
+				}
+			}
+			helpers.warn( state.denyMessage );
+			return false;
+		},
+		// Saves the list to the post. On failure shows the server's message and rolls back.
+		save: async ( json ) => {
+			try {
+				const response = await fetch( state.restUrl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': state.nonce,
+					},
+					body: JSON.stringify( { todos: JSON.parse( json ) } ),
+				} );
+				if ( ! response.ok ) {
+					const error = await response.json().catch( () => ( {} ) );
+					throw new Error( error.message );
+				}
+				confirmedTodos = json;
+			} catch ( error ) {
+				helpers.warn(
+					error.message ||
+						_x(
+							'Your changes could not be saved.',
+							'to-do list save error',
+							'to-do-mvc'
+						)
+				);
+				// Roll back to the last list the server confirmed.
+				state.toDos = JSON.parse( confirmedTodos );
+			}
+		},
 		saveEditsForTodo: () => {
 			const { ref } = getElement();
 			const {

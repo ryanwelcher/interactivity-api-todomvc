@@ -1,9 +1,19 @@
 /**
  * The following styles get applied inside the editor only.
  *
- * Replace them with your own styles or remove the file completely.
+ * `style.scss` does the heavy lifting; these only undo what editor and theme
+ * styles add to the same elements.
  */
 
 .wp-block-to-do-mvc-to-do-mvc {
-	border: 1px dotted #f00;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.filters li a {
+		cursor: pointer;
+	}
 }

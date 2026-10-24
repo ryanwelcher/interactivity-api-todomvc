@@ -8,6 +8,15 @@
   "icon": "yes-alt",
   "description": "A to-do block in the style of https://todomvc.com/",
   "example": {},
+  "attributes": {
+    "todos": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object"
+      }
+    }
+  },
   "supports": {
     "html": false,
     "interactivity": true,
